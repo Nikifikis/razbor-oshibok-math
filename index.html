@@ -15,7 +15,7 @@
 </head>
 <body>
 <div class="app">
-  <header class="topbar"><div class="brand"><div class="brandmark">✓</div><span>РАЗБОР</span><span style="color:#9aa2b1;font-weight:600">· математика</span></div><div class="topmeta"><span class="pill">7–8 класс</span><div class="avatar">М</div></div></header>
+  <header class="topbar"><div class="brand"><div class="brandmark">✓</div><span>РАЗБОР</span><span style="color:#9aa2b1;font-weight:600">· математика</span></div><div class="topmeta"><span class="pill">7–8 класс</span><button class="secondary" id="teacherQuick" style="padding:9px 13px">Учителю</button><div class="avatar">М</div></div></header>
   <div class="layout">
     <aside class="sidebar">
       <div class="student"><strong>Моя работа</strong><span id="sideLevel">Тема 3 · уровень 2.0</span></div>
@@ -119,6 +119,7 @@ $$('#gradeBtns button').forEach(b=>b.onclick=()=>{state.grade=Number(b.dataset.g
 $('#topicSelect').onchange=e=>{state.topic=e.target.value;save();updateSide();renderTasks()};
 function showScreen(name){$$('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==name));$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===name));window.scrollTo({top:0,behavior:'smooth'})}
 $$('.nav button').forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
+$('#teacherQuick').onclick=()=>showScreen('teacher');
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
 function generatePractice(){
   if(state.topic==='numeric'){
