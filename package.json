@@ -1,0 +1,10 @@
+{
+  "name": "razbor-oshibok-math",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node --experimental-sqlite server.js",
+    "check": "node --check server.js && node --check public/tracking.js && node --check public/teacher.js"
+  },
+  "engines": { "node": ">=22.5" }
+}

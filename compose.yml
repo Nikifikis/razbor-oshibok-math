@@ -1,0 +1,14 @@
+services:
+  razbor:
+    build: .
+    container_name: razbor_math
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8020:3000"
+    volumes:
+      - ./data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
