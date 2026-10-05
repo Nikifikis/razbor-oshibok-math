@@ -1,0 +1,18 @@
+services:
+  razbor:
+    image: razbor-personal:current
+    container_name: razbor_personal
+    restart: unless-stopped
+    env_file: /opt/razbor-math/.env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_DIR: /app/data
+    ports:
+      - "127.0.0.1:8021:3000"
+    volumes:
+      - /opt/razbor-math/data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
