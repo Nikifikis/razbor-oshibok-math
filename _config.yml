@@ -1,0 +1,23 @@
+# GitHub Pages is a closed entry page, not the teaching server.
+# Never publish server generators or the retired open catalogue as site assets.
+exclude:
+  - public
+  - tests
+  - docs
+  - deploy
+  - scripts
+  - teacher-access.txt
+  - data
+  - server.js
+  - personal-access.js
+  - training.js
+  - preparation.js
+  - preparation.css
+  - algebra8-ui.js
+  - algebra8.css
+  - interface.js
+  - interface.css
+  - Dockerfile
+  - compose.yml
+  - package.json
+  - README.md
