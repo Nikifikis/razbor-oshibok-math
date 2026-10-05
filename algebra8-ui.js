@@ -86,7 +86,7 @@
     const s=state.current.steps[state.prepIndex];
     const opts=[...new Set(s.choices)].sort(()=>Math.random()-.5);
     opts.forEach(value=>{
-      const b=document.createElement('button');b.type='button';b.className='g8-choice';b.innerHTML=g8Math(value);
+      const b=document.createElement('button');b.type='button';b.className='g8-choice';b.dataset.answer=value;b.innerHTML=g8Math(value);
       b.onclick=()=>{
         if($('#checkAnswer').disabled)return;
         $('#answer').value=value;$('#checkAnswer').click();

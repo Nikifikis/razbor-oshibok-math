@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node --experimental-sqlite server.js",
-    "check": "node --check server.js && node --check public/tracking.js && node --check public/teacher.js && node --check preparation.js && node --check algebra8-content.js && node --check algebra8-ui.js && node tests/algebra8.test.cjs"
+    "check": "node --check server.js && node --check public/tracking.js && node --check public/teacher.js && node --check preparation.js && node --check algebra8-content.js && node --check algebra8-ui.js && node --check interface.js && node tests/algebra8.test.cjs"
   },
   "engines": { "node": ">=22.5" }
 }
