@@ -15,7 +15,7 @@
   let profile = null;
   let currentAssignment = null;
   let taskIndex = 0;
-  const topics = { numeric: 'Числовые выражения', model: 'Математический язык и модель', linear: 'Линейные уравнения' };
+  const topics = { numeric: 'Числовые выражения', model: 'Математический язык и модель', linear: 'Линейные уравнения', fractions: 'А1 · Алгебраические дроби', fraction_sum: 'А2 · Сложение и вычитание дробей' };
 
   function loginModal() {
     if (document.querySelector('.track-modal')) return;
@@ -80,6 +80,7 @@
       const correct = feedback?.classList.contains('good');
       const wrong = feedback?.classList.contains('bad');
       if (!correct && !wrong) return;
+      if (correct && document.querySelector('#work')?.dataset.learningPhase === 'guided') return;
       const nextStep = document.querySelector('#prepNext');
       if (correct && nextStep && nextStep.textContent !== 'Завершить пример') return;
       const hintStage = document.querySelectorAll('.prep-hint-label, .hint-step').length;

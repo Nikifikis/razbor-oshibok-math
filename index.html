@@ -6,6 +6,7 @@
   <title>Разбор · работа над ошибками</title>
   <meta name="description" content="Пошаговая работа над ошибками по математике для 7–8 классов">
   <link rel="stylesheet" href="preparation.css">
+  <link rel="stylesheet" href="algebra8.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%232b59ff'/%3E%3Cpath d='M17 33l10 10 21-23' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <style>
     :root{--ink:#172033;--muted:#667085;--line:#e5e9f2;--bg:#f4f6fb;--card:#fff;--blue:#2b59ff;--blue2:#eaf0ff;--lime:#dff84c;--red:#df334b;--green:#168f5b;--amber:#bb7000;--shadow:0 18px 55px rgba(28,39,72,.10);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -104,12 +105,14 @@
     </main>
   </div>
 </div>
+<script src="algebra8-content.js"></script>
 <script>
 const TOPICS={
  numeric:{name:'Числовые выражения',tasks:{2:[['Рационально вычислить','увидеть общий множитель и сгруппировать'],['Перевести текст в выражение','различать сумму, разность, произведение и частное'],['Подставить значение переменной','работать со знаками и дробями'],['Вычислить выражение','соблюдать порядок действий']],3:[['Найти несколько способов','обосновать самый рациональный'],['Составить сложное выражение','удержать структуру текста'],['Подставить дробное значение','сократить до вычисления'],['Объяснить преобразование','назвать использованное свойство']]},mastery:['Порядок действий','Рациональный способ','Перевод текста','Подстановка']},
  model:{name:'Математический язык и модель',tasks:{2:[['Записать на математическом языке','перевести словесную конструкцию в символы'],['Составить модель ситуации','выбрать переменную и записать связи'],['Распознать слова-маркеры','различать «на» и «в», сумму и произведение'],['Проверить модель','соотнести каждую часть с условием']],3:[['Прочитать формулу обычным языком','использовать математические термины'],['Выделить три этапа моделирования','модель — решение — ответ'],['Решить задачу по модели','проверить смысл и единицы'],['Сравнить две модели','объяснить, какая соответствует условию']]},mastery:['Математическая запись','Выбор переменной','Связи величин','Проверка модели']},
  linear:{name:'Линейные уравнения',tasks:{2:[['Решить уравнение','равносильные преобразования'],['Проверить пару чисел','подстановка и верный вывод'],['Найти переменную','подстановка заданного значения'],['Построить прямую','выбрать две точки']],3:[['Доказать принадлежность точки','проверить два условия'],['Выразить переменные','равносильные преобразования'],['Найти параметр','подстановка и раскрытие скобок'],['Построить график','выразить y и выбрать точки']]},mastery:['Равносильные шаги','Подстановка','Обоснование','График']}
 };
+Object.assign(TOPICS, GRADE8_TOPICS);
 let state={level:2,grade:7,topic:'numeric',mode:'known',hard:{},step:1,tries:0,current:null,hintStage:0,extraActive:false,extraSolved:0,extraGoal:0};
 try{const saved=JSON.parse(localStorage.getItem('razbor-state'));if(saved)state={...state,...saved}}catch(e){}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -195,5 +198,6 @@ renderRecentStudents();
 setTopic(state.topic);$$('#gradeBtns button').forEach(b=>{const active=Number(b.dataset.grade)===state.grade;b.classList.toggle('active',active);b.setAttribute('aria-pressed',active)});setMode(state.mode);setLevel(state.level);renderReport();
 </script>
 <script src="preparation.js"></script>
+<script src="algebra8-ui.js"></script>
 </body>
 </html>

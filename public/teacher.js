@@ -6,6 +6,9 @@ const api = async (url, options = {}) => {
   return data;
 };
 let classes = [], selectedClassId = null;
+const assignmentTopics = $('#assignmentForm select[name="topic"]');
+assignmentTopics.innerHTML = '<optgroup label="7 класс"><option value="numeric">Числовые выражения</option><option value="model">Математический язык и модель</option><option value="linear">Линейные уравнения</option></optgroup><optgroup label="8 класс"><option value="fractions">А1 · Алгебраические дроби</option><option value="fraction_sum">А2 · Сложение и вычитание дробей</option></optgroup>';
+const sixTasks = document.createElement('option'); sixTasks.value='6';sixTasks.textContent='6';$('#assignmentForm select[name="taskCount"]').append(sixTasks);
 const statusText = { not_started:'Не начал', in_progress:'Выполняет', needs_help:'Нужна помощь', completed:'Готово' };
 
 function toast(text) { const el=document.createElement('div'); el.className='toast'; el.textContent=text; document.body.append(el); setTimeout(()=>el.remove(),2600); }

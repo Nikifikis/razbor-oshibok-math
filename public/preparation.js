@@ -139,7 +139,7 @@ loadPractice = function () {
   document.querySelector('#problemTitle').textContent = state.extraActive ? 'Дополнительный пример ' + (state.extraSolved + 1) : p.title;
   document.querySelector('#problemText').textContent = p.text;
   document.querySelector('#problemLevel').textContent = state.level + '.0';
-  const example = PREP_EXAMPLES[state.topic];
+  const example = PREP_EXAMPLES[state.topic] || {lead:'Разберём похожий пример.',lines:[]};
   document.querySelector('#workedBody').innerHTML = '<p>' + esc(example.lead) + '</p><ol>' + example.lines.map(line => '<li>' + esc(line) + '</li>').join('') + '</ol>';
   prepWorked.open = !state.extraActive;
   document.querySelector('#finishExtra').classList.toggle('hidden', !state.extraActive);

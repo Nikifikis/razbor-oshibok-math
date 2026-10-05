@@ -1,0 +1,31 @@
+.math-frac{display:inline-flex;vertical-align:middle;flex-direction:column;text-align:center;line-height:1.3;margin:0 .18em;font-family:Georgia,serif}
+.math-frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em .12em}
+.math-frac>span:last-child{padding:.12em .2em 0}
+.math-frac sup{font-size:.65em}.math-op{font:600 16px system-ui,sans-serif}
+.grade8-topics{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g8-rule{padding:18px 24px;border-bottom:1px solid var(--line);background:#f0f7f5;font-size:15px;color:#244c41}
+.g8-rule strong{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.g8-rule p{margin:0;line-height:1.55}
+.g8-choices{display:grid;gap:9px;margin:14px 0}
+.g8-choice{background:white;border:2px solid var(--line);padding:13px 15px;border-radius:12px;font:inherit;text-align:left;line-height:1.5;cursor:pointer;color:var(--ink);overflow-wrap:anywhere}
+.g8-choice:hover{border-color:#a8baff;background:#f7f9ff}
+.g8-choice:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
+.g8-choice.correct{border-color:#168f5b;background:#e7f7ef;color:#0a7246}
+.g8-choice.wrong{border-color:#df6575;background:#fff0f1}
+.g8-choice:disabled{cursor:default}
+.grade8-work .answerline{display:none}
+.g8-help{margin-top:12px}
+.g8-skill{display:grid;gap:8px}.g8-skill .micro{margin:0;text-align:left}
+.g8-disabled{opacity:.55;cursor:default!important;transform:none!important;box-shadow:none!important}
+.g8-badge{display:inline-block;margin-top:6px;color:#168f5b;font-size:12px;font-weight:800}
+.g8-report-row{padding:13px 15px;background:#f5f7fb;border-radius:12px;display:flex;justify-content:space-between;gap:14px;font-size:14px}
+.g8-report-row span{color:var(--muted);flex-shrink:0;font-size:12px}
+.g8-report-row.done span{color:#168f5b}
+.g8-independent .worked-example,.g8-independent .g8-rule{display:none}
+.g8-independent .coach{display:none}.g8-independent .workarea{grid-template-columns:1fr}
+.g8-graph{margin:16px 0;max-width:480px;background:white;padding:10px;border:1px solid var(--line);border-radius:12px;color:var(--ink)}.g8-graph svg{display:block;width:100%;height:auto;font:13px system-ui,sans-serif}.g8-graph figcaption{font:12px/1.5 system-ui,sans-serif;color:var(--muted);padding:0 8px 4px}
+.grade8-work .problemtext{font-size:clamp(19px,2.2vw,27px);overflow-x:auto;padding:28px 18px;line-height:1.8}
+.g8-independent .prep-why{color:#2446a9}
+.print-task .math-frac{font-size:20px}.print-task>div:first-child{line-height:1.8}
+@media(max-width:800px){.grade8-topics{grid-template-columns:1fr}.g8-report-row{flex-direction:column;gap:4px}}
+@media(max-width:620px){.g8-rule{padding:16px 18px}.grade8-work .problemtext{font-size:19px}.g8-choice{font-size:14px;padding:12px}.g8-skill{grid-column:1/-1}}

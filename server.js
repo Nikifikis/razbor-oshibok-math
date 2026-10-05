@@ -210,7 +210,7 @@ async function handleApi(req, res, url) {
     if (!requireRole(req, res, 'teacher')) return;
     const body = await readJson(req), classId = Number(body.classId), level = Number(body.level), taskCount = Math.max(1, Math.min(20, Number(body.taskCount) || 4));
     const title = String(body.title || '').trim(), topic = String(body.topic || 'numeric');
-    if (!db.prepare('SELECT 1 FROM classes WHERE id=?').get(classId) || title.length < 3 || !['numeric','model','linear'].includes(topic) || ![2,3].includes(level)) return json(res, 400, { error: 'Проверьте параметры работы' });
+    if (!db.prepare('SELECT 1 FROM classes WHERE id=?').get(classId) || title.length < 3 || !['numeric','model','linear','fractions','fraction_sum'].includes(topic) || ![2,3].includes(level)) return json(res, 400, { error: 'Проверьте параметры работы' });
     const result = db.prepare('INSERT INTO assignments(class_id,title,topic,level,task_count,due_date) VALUES(?,?,?,?,?,?)').run(classId,title,topic,level,taskCount,body.dueDate || null);
     return json(res, 201, { id: Number(result.lastInsertRowid) });
   }
