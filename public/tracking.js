@@ -71,7 +71,7 @@
 
   document.addEventListener('click', event => {
     if (event.target.id === 'hintBtn' && currentAssignment) setTimeout(() => {
-      const stage = document.querySelectorAll('.hint-step').length;
+      const stage = document.querySelectorAll('.prep-hint-label, .hint-step').length;
       const skill = document.querySelector('#problemType')?.textContent || '';
       if (stage) sendProgress('hint', { hintStage:stage, skill });
     }, 30);
@@ -80,7 +80,9 @@
       const correct = feedback?.classList.contains('good');
       const wrong = feedback?.classList.contains('bad');
       if (!correct && !wrong) return;
-      const hintStage = document.querySelectorAll('.hint-step').length;
+      const nextStep = document.querySelector('#prepNext');
+      if (correct && nextStep && nextStep.textContent !== 'Завершить пример') return;
+      const hintStage = document.querySelectorAll('.prep-hint-label, .hint-step').length;
       const skill = document.querySelector('#problemType')?.textContent || '';
       sendProgress('answer', { correct, hintStage, skill });
       if (correct) { taskIndex += 1; currentAssignment.correct_count = taskIndex; }
