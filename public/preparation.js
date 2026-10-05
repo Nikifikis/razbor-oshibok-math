@@ -134,6 +134,7 @@ loadPractice = function () {
   state.current = p;
   state.prepIndex = 0;
   state.prepHintsUsed = 0;
+  state.prepCompleted = false;
   document.querySelector('#problemType').textContent = p.type;
   document.querySelector('#problemTitle').textContent = state.extraActive ? 'Дополнительный пример ' + (state.extraSolved + 1) : p.title;
   document.querySelector('#problemText').textContent = p.text;
@@ -143,6 +144,7 @@ loadPractice = function () {
   prepWorked.open = !state.extraActive;
   document.querySelector('#finishExtra').classList.toggle('hidden', !state.extraActive);
   prepShowStep();
+  renderReport();
 };
 
 updateProgress = function () {
@@ -202,6 +204,7 @@ prepNext.onclick = function () {
     return;
   }
   state.prepIndex = state.current.steps.length;
+  state.prepCompleted = true;
   updateProgress();
   if (state.extraActive) {
     state.extraSolved++;
@@ -221,7 +224,11 @@ prepNext.onclick = function () {
 };
 
 renderReport = function () {
-  document.querySelector('#mastery').innerHTML = '<div class="next"><b>✓</b><span>Один пример по теме «' + esc(TOPICS[state.topic].name) + '» разобран по шагам. Подсказок открыто: ' + (state.prepHintsUsed || 0) + '.</span></div>';
+  const done = !!state.prepCompleted;
+  document.querySelector('#mastery').innerHTML = '<div class="next"><b>' + (done ? '✓' : '…') + '</b><span>' + (done ? 'Один пример по теме «' + esc(TOPICS[state.topic].name) + '» разобран по шагам. Подсказок открыто: ' + (state.prepHintsUsed || 0) + '.' : 'Текущий пример ещё не завершён. Вернись к подготовке, чтобы пройти все шаги.') + '</span></div>';
+  document.querySelector('#report .bigcheck h2').textContent = done ? 'Пример разобран' : 'Продолжи подготовку';
+  document.querySelector('#report .bigcheck p').textContent = done ? 'Теперь попробуй решить новый пример самостоятельно, чтобы проверить понимание.' : 'После всех шагов здесь появится итог.';
+  document.querySelector('#report .hero h1').textContent = done ? 'Ты разобрал пример по шагам.' : 'Здесь будет итог подготовки.';
   document.querySelector('#teacherNote').innerHTML = '<strong>Учителю:</strong> это результат одного разобранного примера. Для вывода об освоении темы нужны самостоятельные задания без подсказок.';
 };
 document.querySelector('#report .bigcheck h2').textContent = 'Пример разобран';
