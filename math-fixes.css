@@ -1,0 +1,8 @@
+.answer{font-size:20px;line-height:1.65}
+.answer .fraction,.inline-answer .fraction{font-family:Georgia,serif;min-width:2.2em}
+.math-prefix{margin-right:.18em}
+.math-separator{margin-right:.35em}
+.inline-answer{display:inline-flex;align-items:center;gap:.18em;margin:.2em .15em;color:var(--ink);font-size:18px}
+.hint-feedback{background:#edf2ff;color:#34517e}
+.feedback span{display:inline-block;margin-top:5px}
+@media(max-width:700px){.answer{font-size:17px}.inline-answer{font-size:16px}}
