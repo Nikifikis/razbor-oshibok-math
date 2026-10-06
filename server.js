@@ -74,6 +74,12 @@ db.exec(`
     ref_id INTEGER,
     expires_at INTEGER NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS teachers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1
+  );
   CREATE INDEX IF NOT EXISTS idx_students_class ON students(class_id);
   CREATE INDEX IF NOT EXISTS idx_assignments_class ON assignments(class_id);
   CREATE INDEX IF NOT EXISTS idx_progress_student ON progress(student_id);
@@ -125,6 +131,7 @@ const sessionFor = req => {
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
   const row = db.prepare('SELECT role, ref_id, expires_at FROM sessions WHERE token_hash = ?').get(tokenHash);
   if (!row || row.expires_at < Date.now()) return null;
+  if (row.role === 'teacher' && db.prepare('SELECT COUNT(*) n FROM teachers').get().n && !db.prepare('SELECT id FROM teachers WHERE id=? AND active=1').get(row.ref_id)) return null;
   return row;
 };
 const createSession = (res, role, refId = null) => {
@@ -157,8 +164,11 @@ async function handleApi(req, res, url) {
   if (req.method === 'POST' && url.pathname === '/api/teacher/login') {
     if (rateLimited(req)) return json(res, 429, { error: 'Слишком много попыток. Попробуйте позже.' });
     const body = await readJson(req);
-    if (!ADMIN_PASSWORD_HASH || body.username !== ADMIN_USERNAME || !verifySecret(body.password, ADMIN_PASSWORD_HASH)) return json(res, 401, { error: 'Неверный логин или пароль' });
-    return json(res, 200, { ok: true }, { 'set-cookie': createSession(res, 'teacher') });
+    const configured = db.prepare('SELECT COUNT(*) n FROM teachers').get().n;
+    const teacher = configured ? db.prepare('SELECT id,password_hash FROM teachers WHERE username=? AND active=1').get(String(body.username || '')) : null;
+    const valid = configured ? teacher && verifySecret(body.password, teacher.password_hash) : ADMIN_PASSWORD_HASH && body.username === ADMIN_USERNAME && verifySecret(body.password, ADMIN_PASSWORD_HASH);
+    if (!valid) return json(res, 401, { error: 'Неверный логин или пароль' });
+    return json(res, 200, { ok: true }, { 'set-cookie': createSession(res, 'teacher', teacher?.id ?? null) });
   }
   if (req.method === 'POST' && url.pathname === '/api/logout') {
     const token = parseCookies(req)[COOKIE_NAME];

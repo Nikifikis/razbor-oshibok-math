@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),crypto=require('node:crypto');
 const directory=fs.mkdtempSync(path.join(os.tmpdir(),'razbor-access-test-'));
 process.env.DATA_DIR=directory;process.env.NODE_ENV='test';process.env.ADMIN_USERNAME='test-teacher';const salt=crypto.randomBytes(16).toString('hex'),password=crypto.randomBytes(20).toString('hex');process.env.ADMIN_PASSWORD_HASH=salt+':'+crypto.scryptSync(password,salt,32).toString('hex');
-const {server,db}=require('../server');
+const {server,db,hashSecret}=require('../server');
 (async()=>{await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port;
   async function req(route,body,cookie){const response=await fetch(base+route,{...(body!==undefined?{method:'POST',body:JSON.stringify(body),headers:{'content-type':'application/json',...(cookie?{cookie}:{})}}:{headers:cookie?{cookie}:{}})});return {status:response.status,data:await response.json().catch(()=>null),cookie:response.headers.get('set-cookie')?.split(';')[0]};}
   try{
@@ -48,6 +48,11 @@ const {server,db}=require('../server');
     await completeSkill(both.id,1);pair=(await req('/api/student/me',undefined,first)).data.assignments.find(x=>x.id===both.id);assert.equal(pair.status,'completed');
     await req('/api/assignments/'+a.id+'/revoke',{},teacher);assert.equal((await req('/api/student/me',undefined,first)).data.assignments.some(x=>x.id===a.id),false);assert.equal((await req('/api/student/tasks/'+task.id+'/hint',{},first)).status,403);
     const replacement=await req('/api/students/'+one.id+'/access-code',{},teacher);assert.equal((await req('/api/student/me',undefined,first)).status,401);assert.equal((await req('/api/student/login',{code:one.code})).status,401);assert.equal((await req('/api/student/login',{code:replacement.data.code})).status,200);
-    console.log('Access tests passed: personal code, individual assignment, skill/level isolation, server grading, race protection, revocation and teacher step log.');
+    for(let i=1;i<=5;i++)db.prepare('INSERT INTO teachers(username,password_hash) VALUES(?,?)').run('teacher'+i,hashSecret('test-password-'+i));
+    assert.equal((await req('/api/teacher/overview',undefined,teacher)).status,401,'legacy teacher sessions must be invalid');
+    assert.equal((await req('/api/teacher/login',{username:'test-teacher',password})).status,401,'legacy env login must be disabled');
+    for(let i=1;i<=5;i++){const login=await req('/api/teacher/login',{username:'teacher'+i,password:'test-password-'+i});assert.equal(login.status,200);assert.equal((await req('/api/teacher/overview',undefined,login.cookie)).status,200);if(i===5){db.prepare('UPDATE teachers SET active=0 WHERE username=?').run('teacher5');assert.equal((await req('/api/teacher/overview',undefined,login.cookie)).status,401);}}
+    assert.equal((await req('/api/teacher/login',{username:'teacher1',password:'wrong'})).status,401);
+    console.log('Access tests passed, including five teacher accounts, legacy login/session rejection and account disabling.');
   }finally{await new Promise(resolve=>server.close(resolve));db.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
