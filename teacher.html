@@ -1,29 +1,16 @@
 <!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Кабинет учителя · Разбор</title>
-  <style>
-    :root{--ink:#172033;--muted:#667085;--blue:#2b59ff;--bg:#f4f6fa;--line:#e1e5ed;--lime:#c8ff42;--red:#b42338}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Inter,system-ui,sans-serif}.top{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5vw;position:sticky;top:0;z-index:5}.brand{font-size:20px;font-weight:900}.brand i{font-style:normal;background:var(--blue);color:white;border-radius:9px;padding:7px;margin-right:8px}.wrap{max-width:1180px;margin:auto;padding:36px 24px 70px}.eyebrow{font-size:13px;text-transform:uppercase;letter-spacing:.13em;color:var(--blue);font-weight:850}h1{font-size:clamp(34px,5vw,54px);line-height:1.02;letter-spacing:-.05em;margin:8px 0 12px}h2,h3{letter-spacing:-.025em}.muted{color:var(--muted)}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}.login{max-width:430px;margin:8vh auto}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:14px;font-weight:800}.field input,.field select{border:2px solid var(--line);border-radius:11px;padding:12px;font:inherit;width:100%}.btn{border:0;border-radius:11px;padding:12px 16px;font:inherit;font-weight:850;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#eef1f6;color:#384254}.danger{color:var(--red)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.metric b{font-size:31px;display:block}.toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin:26px 0 14px}.toolbar select{padding:10px;border:1px solid var(--line);border-radius:10px;background:white}.forms{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.form-actions{display:flex;justify-content:flex-end;margin-top:14px}.notice{background:#eff8e4;border-left:4px solid var(--lime);padding:12px;border-radius:0 10px 10px 0;margin-top:12px}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{text-align:left;border-bottom:1px solid var(--line);padding:13px 10px;font-size:14px}.table th{color:var(--muted)}.status{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.not_started{background:#eef1f6}.in_progress{background:#e7edff;color:#2148c8}.needs_help{background:#fff0e5;color:#a64b00}.completed{background:#e6f7ef;color:#087347}.class-code{font:800 15px ui-monospace,monospace;background:#eef1f6;padding:7px 9px;border-radius:8px}.hidden{display:none!important}.error{min-height:22px;color:var(--red);font-size:14px}.empty{text-align:center;color:var(--muted);padding:35px}.toast{position:fixed;right:20px;bottom:20px;background:var(--ink);color:#fff;padding:13px 16px;border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.25)}@media(max-width:850px){.grid,.forms{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.toolbar select{width:100%}}
-  </style>
-  <link rel="stylesheet" href="student.css">
-  <style>.forms{grid-template-columns:1fr 1fr}#assignmentForm{grid-column:1/-1}.forms .field input[type=checkbox]{width:auto}.dialog .card{padding:24px}@media(max-width:700px){.forms{grid-template-columns:1fr}.skill-row{flex-direction:column;align-items:stretch}}</style>
-</head>
-<body>
-  <header class="top"><div class="brand"><i>✓</i> РАЗБОР · учитель</div><div><button class="btn secondary hidden" id="logout">Выйти</button></div></header>
-  <main class="wrap">
-    <section id="login" class="card login"><div class="eyebrow">Защищённый вход</div><h2>Кабинет учителя</h2><p class="muted">Здесь хранятся классы, назначения и результаты учеников.</p><form id="loginForm"><div class="field"><label>Логин</label><input name="username" autocomplete="username" required></div><div class="field"><label>Пароль</label><input name="password" type="password" autocomplete="current-password" required></div><div class="error" id="loginError"></div><button class="btn primary" style="width:100%">Войти</button></form></section>
-    <section id="dashboard" class="hidden"><div class="eyebrow">Отслеживание учеников</div><h1>Кому уже понятно,<br>а кому нужна помощь.</h1><p class="muted">Система учитывает попытки, подсказки и завершённые задания.</p>
-      <div class="grid" id="metrics"></div>
-      <div class="toolbar"><h2 style="margin:0">Класс</h2><select id="classSelect"></select></div>
-      <div class="forms">
-        <form class="card" id="classForm"><h3>Новый класс</h3><div class="field"><label>Название</label><input name="name" placeholder="Например, 7А" required></div><div class="form-actions"><button class="btn primary">Создать класс</button></div></form>
-        <form class="card" id="studentForm"><h3>Добавить ученика</h3><div class="field"><label>Имя или псевдоним</label><input name="name" required></div><div class="field"><label>PIN, необязательно</label><input name="pin" inputmode="numeric" placeholder="Сгенерируется автоматически"></div><div class="form-actions"><button class="btn primary">Добавить</button></div><div id="studentNotice"></div></form>
-        <form class="card" id="assignmentForm"><h3>Назначить работу</h3><div class="field"><label>Название</label><input name="title" placeholder="Работа над ошибками №1" required></div><div class="field"><label>Тема</label><select name="topic"><option value="numeric">Числовые выражения</option><option value="model">Математический язык и модель</option><option value="linear">Линейные уравнения</option></select></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="field"><label>Уровень</label><select name="level"><option value="2">2.0</option><option value="3">3.0</option></select></div><div class="field"><label>Заданий</label><select name="taskCount"><option>3</option><option selected>4</option><option>5</option></select></div></div><div class="form-actions"><button class="btn primary">Назначить</button></div></form>
-      </div>
-      <div class="card" style="margin-top:18px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><h2 style="margin:0 0 4px">Результаты</h2><div class="muted" id="classInfo"></div></div><button class="btn secondary" id="refresh">Обновить</button></div><div class="tablewrap" id="results"></div></div>
-    </section>
-  </main>
-  <script>if(location.hostname==='nikifikis.github.io')location.replace('https://nikita-math.ru/razbor/teacher.html');</script>
-  <script src="teacher-personal.js"></script>
-</body></html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Учителю · Разбор</title><link rel="stylesheet" href="static-app.css"><link rel="stylesheet" href="math-fixes.css"><link rel="stylesheet" href="teacher-static.css"></head>
+<body><header class="top no-print"><a class="brand" href="./"><span>✓</span> РАЗБОР</a><a class="teacher-link" href="./">К тренировке</a></header><main class="teacher-wrap">
+  <section class="no-print"><div class="eyebrow">Печатная работа над ошибками</div><h1>Соберите лист для ребёнка</h1><p class="lead">Задания создаются заново и не повторяют подтверждения. Подсказки можно добавить отдельной страницей или не печатать.</p>
+  <form class="builder card" id="builder">
+    <label>Имя ученика<input name="student" placeholder="Например, Иван" required></label>
+    <label>Класс<select name="grade"><option value="7">7 класс</option><option value="8">8 класс</option></select></label>
+    <label>Тема<select name="topic"></select></label>
+    <label>Уровень<select name="level"><option value="2">2.0</option><option value="3">3.0</option></select></label>
+    <label>Заданий<select name="count"><option>3</option><option>4</option><option>5</option><option selected>6</option><option>8</option><option>10</option></select></label>
+    <label class="hint-toggle"><input type="checkbox" name="includeHints"><span><strong>Печатать подсказки</strong><small>Добавить после заданий отдельную страницу с алгоритмами и ответами</small></span></label>
+    <button class="primary build" type="submit">Собрать работу</button>
+  </form>
+  <div class="print-bar" id="printBar" hidden><span id="printMode"></span><button class="secondary" id="toggleHints" type="button"></button><button class="primary" id="print" type="button">Печатать работу</button></div></section>
+  <section class="sheet" id="sheet" hidden></section>
+</main><script src="training-browser.js"></script><script src="teacher-static.js"></script></body></html>

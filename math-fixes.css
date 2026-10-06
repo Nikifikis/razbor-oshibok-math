@@ -5,4 +5,5 @@
 .inline-answer{display:inline-flex;align-items:center;gap:.18em;margin:.2em .15em;color:var(--ink);font-size:18px}
 .hint-feedback{background:#edf2ff;color:#34517e}
 .feedback span{display:inline-block;margin-top:5px}
+.top-actions{display:flex;align-items:center;gap:16px}.teacher-link{background:#eef1f6;border-radius:12px;padding:9px 14px;text-decoration:none;font-weight:800;color:#40506a}
 @media(max-width:700px){.answer{font-size:17px}.inline-answer{font-size:16px}}
