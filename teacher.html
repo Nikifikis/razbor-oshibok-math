@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Учителю · Разбор</title><link rel="stylesheet" href="static-app.css"><link rel="stylesheet" href="math-fixes.css"><link rel="stylesheet" href="teacher-static.css"></head>
 <body><header class="top no-print"><a class="brand" href="./"><span>✓</span> РАЗБОР</a><a class="teacher-link" href="./">К тренировке</a></header><main class="teacher-wrap">
-  <section class="no-print"><div class="eyebrow">Печатная работа над ошибками</div><h1>Соберите лист для ребёнка</h1><p class="lead">Задания создаются заново и не повторяют подтверждения. Подсказки можно добавить отдельной страницей или не печатать.</p>
+  <section class="no-print"><div class="eyebrow">Задание ученику</div><h1>Подготовьте тренировку или печатную работу</h1><p class="lead">Выберите тему и уровень. После сборки можно отправить ребёнку закрытый маршрут «тест → работа над ошибками» или распечатать отдельный лист. Все примеры создаются заново и не повторяют подтверждения.</p>
   <form class="builder card" id="builder">
     <label>Имя ученика<input name="student" placeholder="Например, Иван" required></label>
     <label>Класс<select name="grade"><option value="7">7 класс</option><option value="8">8 класс</option></select></label>
     <label>Тема<select name="topic"></select></label>
     <label>Уровень<select name="level"><option value="2">2.0</option><option value="3">3.0</option></select></label>
-    <label>Заданий<select name="count"><option>3</option><option>4</option><option>5</option><option selected>6</option><option>8</option><option>10</option></select></label>
+    <label>Заданий в варианте<select name="count"><option>3</option><option>4</option><option>5</option><option selected>6</option><option>8</option><option>10</option></select></label>
     <label class="hint-toggle"><input type="checkbox" name="includeHints"><span><strong>Печатать подсказки</strong><small>Добавить после заданий отдельную страницу с алгоритмами и ответами</small></span></label>
-    <button class="primary build" type="submit">Собрать работу</button>
+    <button class="primary build" type="submit">Подготовить задание</button>
   </form>
-  <div class="print-bar" id="printBar" hidden><span id="printMode"></span><button class="secondary" id="copyLink" type="button">Скопировать ссылку ученику</button><button class="secondary" id="toggleHints" type="button"></button><button class="primary" id="print" type="button">Печатать работу</button></div><p class="share-status" id="shareStatus" hidden></p></section>
+  <div class="print-bar" id="printBar" hidden><span id="printMode"></span><button class="secondary training-link-button" id="copyTrainingLink" type="button">Ссылка на тренировку + разбор</button><button class="secondary" id="copyLink" type="button">Ссылка на печатную работу</button><button class="secondary" id="toggleHints" type="button"></button><button class="primary" id="print" type="button">Печатать работу</button></div><p class="share-status" id="shareStatus" hidden></p></section>
   <section class="sheet" id="sheet" hidden></section>
 </main><script src="training-browser.js"></script><script src="teacher-static.js"></script></body></html>
