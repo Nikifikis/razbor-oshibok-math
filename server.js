@@ -158,8 +158,10 @@ const rateLimited = (req, scope = 'teacher', limit = 12) => {
 };
 
 const personalAccess = require('./personal-access')({ db, json, readJson, requireRole, sessionFor, createSession, hashSecret, normalizeName, randomCode, rateLimited });
+const sharedResults = require('./shared-results')({ db, json, readJson, catalog:require('./training').catalog, rateLimited });
 
 async function handleApi(req, res, url) {
+  if (await sharedResults(req, res, url)) return;
   if (await personalAccess(req, res, url)) return;
   if (req.method === 'POST' && url.pathname === '/api/teacher/login') {
     if (rateLimited(req)) return json(res, 429, { error: 'Слишком много попыток. Попробуйте позже.' });

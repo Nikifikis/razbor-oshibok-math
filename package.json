@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node --experimental-sqlite server.js",
-    "check": "node --check server.js && node --check personal-access.js && node --check training.js && node --check public/student.js && node --check public/teacher-personal.js && node tests/training.test.cjs",
+    "check": "node --check server.js && node --check personal-access.js && node --check shared-results.js && node --check training.js && node --check teacher-static.js && node --check assigned-static.js && node --check public/student.js && node --check public/teacher-personal.js && node tests/training.test.cjs && node tests/shared-results.test.cjs",
     "test:access": "node tests/access.test.cjs"
   },
   "engines": { "node": ">=22.5" }
