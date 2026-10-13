@@ -50,7 +50,7 @@ function heightsSvg(h1,h2){
 function linePointsSvg(labels,extra='',caption='Точки на прямой',kind='line'){
   const left=55,right=485,y=88,n=labels.length,stepSize=(right-left)/(n-1);
   const points=labels.map((label,index)=>{const x=left+index*stepSize;return '<circle cx="'+x+'" cy="'+y+'" r="5"/><text x="'+x+'" y="126">'+escape(label)+'</text>';}).join('');
-  const axis=kind==='segment'?'<line x1="'+left+'" y1="'+y+'" x2="'+right+'" y2="'+y+'" class="geo-axis"/>':'<line x1="28" y1="'+y+'" x2="512" y2="'+y+'" class="geo-axis"/><path d="M28 '+y+' l14 -8 M28 '+y+' l14 8 M512 '+y+' l-14 -8 M512 '+y+' l-14 8" class="geo-axis"/>';
+  const axis=kind==='segment'?'<line x1="'+left+'" y1="'+y+'" x2="'+right+'" y2="'+y+'" class="geo-axis"/>':'<line x1="30" y1="'+y+'" x2="510" y2="'+y+'" class="geo-axis"/>';
   return '<div class="geometry-diagram line-diagram"><svg viewBox="0 0 540 150" role="img" aria-label="'+escape(caption)+'">'+axis+extra+'<g class="geo-line-points">'+points+'</g></svg></div>';
 }
 function build(topic,level,skill,seed){
@@ -379,9 +379,9 @@ function build(topic,level,skill,seed){
       ],result,['A лежит между C и B','B лежит между A и C']);
     }
     if(skill===2){
-      const diagram=linePointsSvg(['A','B','C','D','E','F'],'<line x1="141" y1="69" x2="479" y2="69" class="geo-range-a"/><line x1="227" y1="105" x2="399" y2="105" class="geo-range-cut"/><text x="310" y="57" class="geo-note">отрезок BF</text><text x="310" y="143" class="geo-note">исключить CE</text>','Пересечение условий на прямой');
+      const diagram=linePointsSvg(['A','B','C','D','E','F'],'','Точки A, B, C, D, E и F на одной прямой');
       const result='X ∈ [B; C) или X ∈ (E; F]';
-      return make('Найди область, подходящую всем условиям',diagram,'Условия выполняются одновременно, поэтому нужно последовательно пересекать подходящие множества точек.',[
+      return make('Найди область, подходящую всем условиям',diagram+'<div class="formula-caption"><strong>Условия:</strong> X лежит на отрезке BF; X не лежит на отрезке CE; X лежит на луче BE.</div>','Условия выполняются одновременно, поэтому нужно последовательно пересекать подходящие множества точек.',[
         st('Начни с отрезка','Какие точки разрешает условие X∈BF?','от B до F включительно',['только B и F','вся прямая'],'Отрезок содержит концы и все точки между ними.'),
         st('Исключи второй отрезок','Что останется после запрета X∈CE?','[B; C) и (E; F]',['[C; E]','(B; F)'],'Точки C и E тоже принадлежат запрещённому отрезку и исключаются.'),
         st('Проверь луч','Какая часть лежит на луче BE?','обе оставшиеся части',['только [B; C)','только (E; F]'],'Луч BE начинается в B и идёт вправо через E, поэтому содержит весь BF.'),
@@ -455,9 +455,9 @@ function build(topic,level,skill,seed){
         st('Запиши ответ','Какие значения AC возможны?',result,['AC = '+sum,'AC = '+diff],'Нужно указать сумму и модуль разности.')
       ],result,['AC = '+sum,'AC = '+diff]);
     }
-    const diagram=linePointsSvg(['P','Q','R','S','T','U'],'<line x1="55" y1="69" x2="399" y2="69" class="geo-range-a"/><line x1="141" y1="105" x2="313" y2="105" class="geo-range-cut"/><line x1="227" y1="58" x2="512" y2="58" class="geo-ray"/><text x="310" y="145" class="geo-note">исключить QS</text>','Три условия для точки X');
+    const diagram=linePointsSvg(['P','Q','R','S','T','U'],'','Точки P, Q, R, S, T и U на одной прямой');
     const result='X ∈ (S; T]';
-    return make('Пересеки отрезок, исключение и луч',diagram,'Работай по одному условию: сначала найди пересечение отрезка и луча, затем удали запрещённый отрезок вместе с его концами.',[
+    return make('Пересеки отрезок, исключение и луч',diagram+'<div class="formula-caption"><strong>Условия:</strong> X лежит на отрезке PT; X лежит на луче RU; X не лежит на отрезке QS.</div>','Работай по одному условию: сначала найди пересечение отрезка и луча, затем удали запрещённый отрезок вместе с его концами.',[
       st('Пересеки первые условия','Какая часть PT лежит на луче RU?','отрезок RT',['отрезок PR','луч RU целиком'],'Отрезок PT заканчивается в T, а луч RU начинается в R и идёт вправо.'),
       st('Найди запрет','Какая часть RT входит в отрезок QS?','отрезок RS',['отрезок ST','только точка R'],'QS содержит точки от Q до S включительно.'),
       st('Удали запрещённое','Остаётся ли точка S?','нет',['да','только S и остаётся'],'Условие «не лежит на QS» исключает оба конца Q и S.'),

@@ -5,6 +5,10 @@ function fractions(html){return [...html.matchAll(/<span class="fraction"><span>
 let total=0;
 for(const [topic,c] of Object.entries(catalog))for(const level of [2,3])for(let skill=0;skill<c.skills[level].length;skill++)for(let seed=0;seed<30;seed++){
   const p=build(topic,level,skill,seed);assert.ok(p.formula&&p.rule&&p.steps.length>=3);for(const s of [...p.steps,p.finalStep]){assert.ok(s.choices.includes(s.answer));assert.ok(s.choices.length>=2);assert.ok(s.why);}
+  if(topic==='geometry_line'){
+    assert.doesNotMatch(p.formula,/geo-range-|class="geo-ray"|исключить [A-ZА-Я]{2}/,'the task diagram must not reveal the set-operation result');
+    assert.doesNotMatch(p.formula,/M28 88|M512 88/,'line diagrams must not use decorative arrowheads');
+  }
   const fs=fractions(p.formula);
   for(let i=0;i<10;i++){
     const vars={x:1.73+i,y:3.21+i,a:1.31+i,b:2.83+i,m:2.13+i,n:4.47+i,u:2.16+i};
