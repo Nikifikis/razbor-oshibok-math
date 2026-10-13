@@ -1,6 +1,6 @@
 (()=>{
   const {catalog,build,math,frac}=window.RAZBOR_TRAINING,$=s=>document.querySelector(s),form=$('#builder');
-  let current=null,includeHints=false;
+  let current=null,includeHints=false,activeShareUrl='';
   const historyKey='razbor_tracked_assignments_v1';
   const escape=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const topicsFor=grade=>Object.entries(catalog).filter(([,v])=>v.grade===Number(grade));
@@ -16,31 +16,38 @@
     $('#sheet').hidden=false;$('#printBar').hidden=false;$('#printMode').textContent=includeHints?'Будут напечатаны задания и страница подсказок.':'Будут напечатаны только задания.';$('#toggleHints').textContent=includeHints?'Не печатать подсказки':'Добавить подсказки к печати';
   }
   form.grade.onchange=refreshTopics;form.topic.onchange=refreshSkills;form.level.onchange=refreshSkills;refreshTopics();
-  form.onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form)),skills=catalog[data.topic].skills[Number(data.level)],seed=Date.now()%100000,selected=data.skill===''?null:Number(data.skill),indexes=selected===null?skills.map((_,i)=>i):[selected];includeHints=!!form.includeHints.checked;current={...data,skill:selected,seed,grade:Number(data.grade),level:Number(data.level),count:Number(data.count),exercises:Array.from({length:Number(data.count)},(_,i)=>build(data.topic,Number(data.level),indexes[i%indexes.length],seed+i))};render();$('#sheet').scrollIntoView({behavior:'smooth',block:'start'})};
+  form.onsubmit=async e=>{e.preventDefault();const button=form.querySelector('.build'),label=button.textContent,data=Object.fromEntries(new FormData(form)),skills=catalog[data.topic].skills[Number(data.level)],seed=Date.now()%100000,selected=data.skill===''?null:Number(data.skill),indexes=selected===null?skills.map((_,i)=>i):[selected];includeHints=!!form.includeHints.checked;current={...data,skill:selected,seed,grade:Number(data.grade),level:Number(data.level),count:Number(data.count),exercises:Array.from({length:Number(data.count)},(_,i)=>build(data.topic,Number(data.level),indexes[i%indexes.length],seed+i))};render();button.disabled=true;button.textContent='Создаю ссылку…';await createTrackedLink(current,'Ссылка скопирована. QR-код готов для сканирования.',true);button.disabled=false;button.textContent=label};
   $('#toggleHints').onclick=()=>{includeHints=!includeHints;form.includeHints.checked=includeHints;render()};
   $('#print').onclick=()=>window.print();
-  async function copyUrl(page,params,message){if(!current)return;const url=new URL(page,location.href);url.search=new URLSearchParams(params);try{await navigator.clipboard.writeText(url.href);$('#shareStatus').textContent=message}catch{$('#shareStatus').textContent='Скопируйте ссылку: '+url.href}$('#shareStatus').hidden=false}
+  async function copyText(value){try{await navigator.clipboard.writeText(value);return true}catch{const area=document.createElement('textarea');area.value=value;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();let copied=false;try{copied=document.execCommand('copy')}catch{}area.remove();return copied}}
+  function renderQr(url){const box=$('#qrCode');try{const qr=qrcode(0,'M');qr.addData(url,'Byte');qr.make();box.innerHTML=qr.createSvgTag({cellSize:5,margin:10,scalable:true,title:{text:'QR-код варианта ученика'},alt:{text:'Отсканируйте, чтобы открыть персональный вариант'}})}catch{box.innerHTML='<div class="qr-error">Не удалось построить QR-код. Используйте ссылку слева.</div>'}}
+  function showShareCard(url){activeShareUrl=url;$('#studentLink').value=url;$('#openStudentLink').href=url;renderQr(url);$('#qrSection').hidden=false;$('#toggleQr').textContent='Скрыть QR-код';$('#shareCard').hidden=false;$('#shareCard').scrollIntoView({behavior:'smooth',block:'center'})}
+  async function copyUrl(page,params,message){if(!current)return;const url=new URL(page,location.href);url.search=new URLSearchParams(params);const copied=await copyText(url.href);$('#shareStatus').textContent=copied?message:'Скопируйте ссылку из поля: '+url.href;$('#shareStatus').hidden=false}
   $('#copyLink').onclick=()=>copyUrl('work.html',{student:current.student,grade:String(current.grade),topic:current.topic,level:String(current.level),count:String(current.count),seed:String(current.seed),hints:includeHints?'1':'0'},'Ссылка на печатную работу скопирована.');
   const readHistory=()=>{try{return JSON.parse(localStorage.getItem(historyKey)||'[]')}catch{return[]}};
   const saveHistory=items=>localStorage.setItem(historyKey,JSON.stringify(items.slice(0,80)));
-  async function createTrackedLink(data,message){
+  async function createTrackedLink(data,message,showQr=false){
     $('#shareStatus').hidden=false;$('#shareStatus').textContent='Создаю персональную ссылку…';
     try{
+      if(data.assignmentUrl){const copied=await copyText(data.assignmentUrl);if(showQr)showShareCard(data.assignmentUrl);$('#shareStatus').textContent=copied?message:'Ссылка готова — скопируйте её из поля выше.';return data.assignmentUrl}
       const response=await fetch('api/shared/assignments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({student:data.student,grade:data.grade,topic:data.topic,level:data.level,count:data.count,seed:data.seed,skill:data.skill})});
       const payload=await response.json();if(!response.ok)throw Error(payload.error||'Не удалось создать ссылку');
       const records=readHistory();records.unshift({id:payload.assignmentId,teacherKey:payload.teacherKey,createdAt:new Date().toISOString()});saveHistory(records);
       const params={student:data.student,grade:String(data.grade),topic:data.topic,level:String(data.level),count:String(data.count),seed:String(data.seed),assignment:payload.assignmentId,access:payload.studentKey};if(data.skill!==null&&data.skill!==undefined)params.skill=String(data.skill);
       const url=new URL('assigned.html',location.href);url.search=new URLSearchParams(params);
-      try{await navigator.clipboard.writeText(url.href);$('#shareStatus').textContent=message}catch{$('#shareStatus').textContent='Скопируйте ссылку: '+url.href}
+      data.assignmentUrl=url.href;const copied=await copyText(url.href);if(showQr)showShareCard(url.href);$('#shareStatus').textContent=copied?message:'Ссылка готова — скопируйте её из поля выше.';
       await loadResults();
-    }catch(error){$('#shareStatus').textContent='Не получилось создать отслеживаемую ссылку: '+error.message}
+      return url.href;
+    }catch(error){$('#shareStatus').textContent='Не получилось создать отслеживаемую ссылку: '+error.message;return null}
   }
-  $('#copyTrainingLink').onclick=()=>current&&createTrackedLink(current,'Ссылка скопирована. Результат появится в журнале ниже.');
+  $('#copyTrainingLink').onclick=()=>current&&createTrackedLink(current,'Ссылка скопирована. Результат появится в журнале ниже.',true);
+  $('#copyStudentLink').onclick=async()=>{if(!activeShareUrl)return;const copied=await copyText(activeShareUrl);$('#shareStatus').hidden=false;$('#shareStatus').textContent=copied?'Ссылка снова скопирована.':'Выделите ссылку в поле и скопируйте вручную.'};
+  $('#toggleQr').onclick=()=>{const section=$('#qrSection');section.hidden=!section.hidden;$('#toggleQr').textContent=section.hidden?'Показать QR-код':'Скрыть QR-код'};
   const statusText={not_started:'Не открывал',started:'Выполняет тест',needs_work:'Есть ошибки',working_on_errors:'Разбирает ошибки',completed:'Всё выполнено верно',remediated:'Работа над ошибками завершена'};
   const dateText=value=>value?new Date(value.replace(' ','T')+'Z').toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'ещё не открывал';
   async function getRecord(record){const response=await fetch('api/shared/assignments/'+encodeURIComponent(record.id),{headers:{'x-teacher-key':record.teacherKey}});if(!response.ok)throw Error('Результат недоступен');return {...await response.json(),record}}
   function resultCard(data){const {assignment:a,result:r,mistakes}=data,skills=catalog[a.topic]?.skills[a.level]||[],article=document.createElement('article');article.className='result-entry';const wrong=r.wrongSkills||[];article.innerHTML='<div><span class="status-pill '+escape(r.status)+'">'+escape(statusText[r.status]||r.status)+'</span><h3>'+escape(a.student)+'</h3><p>'+escape(a.topicName)+' · '+a.level+'.0'+(a.skill!==null?' · '+escape(skills[a.skill]||'один навык'):'')+'</p><p>Последнее действие: '+escape(dateText(r.updatedAt))+'</p>'+(wrong.length?'<div class="result-skills">'+wrong.map(i=>'<span class="skill-chip">'+escape(skills[i]||('Навык '+(i+1)))+'</span>').join('')+'</div>':'')+'</div><div class="score">'+(r.testTotal?r.testCorrect+'/'+r.testTotal:'—')+'</div>'+(mistakes.length?'<ul class="result-mistakes">'+mistakes.slice(0,5).map(m=>'<li>'+escape(skills[m.skill_index]||'Навык')+': выбран ответ «'+escape(m.answer_text||'—')+'»</li>').join('')+'</ul>':'')+'<div class="result-actions"></div>';
-    const actions=article.querySelector('.result-actions');wrong.forEach(index=>{const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='Дать ещё: '+(skills[index]||('навык '+(index+1)));button.onclick=()=>createTrackedLink({...a,skill:index,count:Math.max(3,Math.min(6,a.count)),seed:(Date.now()%10000000)+index},'Новая ссылка на этот навык скопирована.');actions.append(button)});if(!wrong.length)actions.remove();return article;
+    const actions=article.querySelector('.result-actions');wrong.forEach(index=>{const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='Дать ещё: '+(skills[index]||('навык '+(index+1)));button.onclick=()=>createTrackedLink({...a,skill:index,count:Math.max(3,Math.min(6,a.count)),seed:(Date.now()%10000000)+index},'Новая ссылка на этот навык скопирована. QR-код обновлён.',true);actions.append(button)});if(!wrong.length)actions.remove();return article;
   }
   async function loadResults(){const list=$('#resultsList'),records=readHistory();if(!records.length){list.innerHTML='<div class="empty-results">Пока нет отправленных тренировок.</div>';return}list.innerHTML='<div class="empty-results">Загружаю результаты…</div>';const loaded=await Promise.all(records.map(record=>getRecord(record).catch(()=>null)));const cards=loaded.filter(Boolean).map(resultCard);list.replaceChildren(...(cards.length?cards:[Object.assign(document.createElement('div'),{className:'empty-results',textContent:'Результаты пока недоступны. Нажмите «Обновить» чуть позже.'})]))}
   $('#refreshResults').onclick=loadResults;loadResults();
