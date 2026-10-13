@@ -9,6 +9,26 @@ for(const [topic,c] of Object.entries(catalog))for(const level of [2,3])for(let 
     assert.doesNotMatch(p.formula,/geo-range-|class="geo-ray"|исключить [A-ZА-Я]{2}/,'the task diagram must not reveal the set-operation result');
     assert.doesNotMatch(p.formula,/M28 88|M512 88/,'line diagrams must not use decorative arrowheads');
   }
+  if(topic==='parallelogram'){
+    assert.doesNotMatch(p.formula,/NaN|undefined/,'geometry markup must contain valid coordinates and labels');
+    if(level===2&&skill===0){
+      assert.match(p.formula,/data-equal="BC-AD"/);
+      assert.match(p.formula,/data-equal="AB-CD"/);
+      assert.match(p.formula,/data-equal="A-C"/);
+      assert.match(p.formula,/data-equal="B-D"/);
+    }
+    if(level===2&&(skill===1||skill===4)){
+      assert.match(p.formula,/data-equal="AO-OC"/);
+      assert.match(p.formula,/data-equal="BO-OD"/);
+    }
+    if(level===2&&skill===2)assert.match(p.formula,/data-equal="AE-EB"/);
+    if(level===3&&skill===0){
+      assert.match(p.formula,/data-height="BH"/);
+      assert.match(p.formula,/data-height="BK"/);
+      assert.match(p.formula,/из тупой вершины B/);
+      assert.doesNotMatch(p.formula,/из вершины A/);
+    }
+  }
   const fs=fractions(p.formula);
   for(let i=0;i<10;i++){
     const vars={x:1.73+i,y:3.21+i,a:1.31+i,b:2.83+i,m:2.13+i,n:4.47+i,u:2.16+i};

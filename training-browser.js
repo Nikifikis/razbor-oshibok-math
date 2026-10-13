@@ -44,8 +44,14 @@ function valueTable(a,b,xKnown,xMissing){
 function parallelogramSvg(extra='',caption='Схема параллелограмма'){
   return '<div class="geometry-diagram"><svg viewBox="0 0 540 350" role="img" aria-label="'+escape(caption)+'"><polygon points="75,270 155,80 455,80 375,270" class="geo-shape"/>'+extra+'<g class="geo-points"><circle cx="75" cy="270" r="4"/><circle cx="155" cy="80" r="4"/><circle cx="455" cy="80" r="4"/><circle cx="375" cy="270" r="4"/></g><g class="geo-labels"><text x="54" y="292">A</text><text x="137" y="65">B</text><text x="465" y="68">C</text><text x="384" y="292">D</text></g></svg></div>';
 }
+function propertiesParallelogramSvg(){
+  return parallelogramSvg('<g data-equal="BC-AD"><path d="M305 68 V92 M225 258 V282" class="geo-tick"/></g><g data-equal="AB-CD"><path d="M108 166 L126 173 M104 177 L122 184 M408 166 L426 173 M404 177 L422 184" class="geo-tick"/></g><g data-equal="A-C"><path d="M103 270 Q87 266 86 244 M427 80 Q443 84 444 106" class="geo-angle angle-a"/></g><g data-equal="B-D"><path d="M183 80 Q158 84 144 106 M347 270 Q372 266 386 244" class="geo-angle angle-b"/></g>','Противоположные стороны и углы параллелограмма');
+}
+function diagonalsParallelogramSvg(caption='Диагонали параллелограмма'){
+  return parallelogramSvg('<line x1="75" y1="270" x2="455" y2="80" class="geo-guide strong"/><line x1="155" y1="80" x2="375" y2="270" class="geo-guide strong"/><circle cx="265" cy="175" r="5" class="geo-center"/><text x="274" y="170" class="geo-value">O</text><g data-equal="AO-OC"><path d="M166 215 L174 230 M356 120 L364 135" class="geo-tick"/></g><g data-equal="BO-OD"><path d="M202 130 L211 119 M209 136 L218 125 M312 225 L321 214 M319 231 L328 220" class="geo-tick"/></g>',caption);
+}
 function heightsSvg(h1,h2){
-  return '<div class="geometry-diagram"><svg viewBox="0 0 540 350" role="img" aria-label="Две высоты параллелограмма"><polygon points="90,270 205,75 465,75 350,270" class="geo-shape"/><line x1="90" y1="270" x2="90" y2="75" class="geo-guide strong"/><line x1="90" y1="270" x2="187" y2="327" class="geo-guide strong"/><path d="M90 93 h18 v-18 M169 316 l10-16 16 10" class="geo-mark"/><path d="M90 240 A30 30 0 0 1 116 255" class="geo-angle"/><text x="120" y="247" class="geo-value">30°</text><text x="60" y="175" class="geo-value">h₁='+h1+'</text><text x="132" y="318" class="geo-value">h₂='+h2+'</text><g class="geo-labels"><text x="70" y="291">A</text><text x="190" y="61">B</text><text x="474" y="63">C</text><text x="360" y="291">D</text></g></svg><small>Чертёж схематический: высоты проведены из вершины A к прямым, содержащим противоположные стороны.</small></div>';
+  return '<div class="geometry-diagram"><svg viewBox="0 0 540 350" role="img" aria-label="Две высоты из тупой вершины параллелограмма"><polygon points="80,310 275,197 505,197 310,310" class="geo-shape"/><g data-height="BH"><line x1="275" y1="197" x2="275" y2="310" class="geo-guide strong"/><path d="M275 296 H289 V310" class="geo-mark"/><text x="218" y="264" class="geo-value">h₁ = '+h1+'</text></g><g data-height="BK"><line x1="275" y1="197" x2="332" y2="297" class="geo-guide strong"/><path d="M342 291 L335 280 L324 287" class="geo-mark"/><text x="326" y="239" class="geo-value">h₂ = '+h2+'</text></g><path d="M275 235 A38 38 0 0 0 294 230" class="geo-angle"/><text x="299" y="222" class="geo-value">30°</text><g class="geo-points"><circle cx="80" cy="310" r="4"/><circle cx="275" cy="197" r="4"/><circle cx="505" cy="197" r="4"/><circle cx="310" cy="310" r="4"/><circle cx="275" cy="310" r="4"/><circle cx="332" cy="297" r="4"/></g><g class="geo-labels"><text x="60" y="332">A</text><text x="257" y="181">B</text><text x="514" y="185">C</text><text x="299" y="334">D</text><text x="258" y="301">H</text><text x="338" y="316">K</text></g></svg><small>Высоты BH и BK проведены из тупой вершины B к сторонам AD и CD.</small></div>';
 }
 function linePointsSvg(labels,extra='',caption='Точки на прямой',kind='line'){
   const left=55,right=485,y=88,n=labels.length,stepSize=(right-left)/(n-1);
@@ -467,7 +473,7 @@ function build(topic,level,skill,seed){
   }
   if(topic==='parallelogram'&&level===2){
     if(skill===0){
-      const diagram=parallelogramSvg('<path d="M305 68 v24 M225 258 v24 M104 169 l20 8 M101 178 l20 8 M404 169 l20 8 M401 178 l20 8" class="geo-tick"/><path d="M86 244 A34 34 0 0 1 111 262 M444 106 A34 34 0 0 1 419 88" class="geo-angle angle-a"/><path d="M166 107 A34 34 0 0 1 187 84 M364 243 A34 34 0 0 1 343 267" class="geo-angle angle-b"/>','Противоположные стороны и углы параллелограмма');
+      const diagram=propertiesParallelogramSvg();
       const result='AB = CD; BC = AD; ∠A = ∠C; ∠B = ∠D';
       return make('Свойства параллелограмма',diagram,'У параллелограмма противоположные стороны попарно параллельны и равны, а противоположные углы равны.',[
         st('Найди противоположные стороны','Какие стороны не имеют общей вершины?','AB и CD; BC и AD',['AB и BC; CD и AD','AC и BD'],'Противоположные стороны расположены друг напротив друга.'),
@@ -477,7 +483,7 @@ function build(topic,level,skill,seed){
       ],result,['AB = BC; CD = AD; ∠A = ∠B','AC = BD; все углы равны']);
     }
     if(skill===1){
-      const diagram=parallelogramSvg('<line x1="75" y1="270" x2="455" y2="80" class="geo-guide strong"/><line x1="155" y1="80" x2="375" y2="270" class="geo-guide strong"/><circle cx="265" cy="175" r="5" class="geo-center"/><text x="274" y="170" class="geo-value">O</text><path d="M165 220 l8 15 M357 115 l8 15 M204 118 l12 -13 M316 245 l12 -13" class="geo-tick"/>','Диагонали параллелограмма');
+      const diagram=diagonalsParallelogramSvg();
       const result='AO = OC; BO = OD';
       return make('Что делают диагонали?',diagram,'Диагонали параллелограмма точкой пересечения делятся пополам.',[
         st('Назови диагонали','Какие отрезки являются диагоналями?','AC и BD',['AB и CD','AO и CO'],'Диагональ соединяет противоположные вершины.'),
@@ -488,7 +494,7 @@ function build(topic,level,skill,seed){
     }
     if(skill===2){
       const part=2+seed%4,base=7+seed%5,side=2*part,perimeter=2*(side+base);
-      const diagram=parallelogramSvg('<circle cx="115" cy="175" r="5" class="geo-center"/><text x="91" y="173" class="geo-value">E</text><text x="101" y="121" class="geo-value">'+part+'</text><text x="223" y="298" class="geo-value">'+base+'</text><path d="M102 135 l16 7 M113 207 l16 7" class="geo-tick"/><text x="126" y="181" class="geo-note">AE = EB</text>','Периметр параллелограмма по отметкам');
+      const diagram=parallelogramSvg('<circle cx="115" cy="175" r="5" class="geo-center"/><text x="91" y="178" class="geo-value">E</text><text x="105" y="112" class="geo-value">'+part+'</text><text x="223" y="306" class="geo-value">'+base+'</text><g data-equal="AE-EB"><path d="M87 219 L103 226 M127 124 L143 131" class="geo-tick"/></g>','Периметр параллелограмма по отметкам');
       const result='P = '+perimeter;
       return make('Найди периметр по отметкам',diagram,'Сначала восстанови целую сторону по равным частям, затем используй равенство противоположных сторон.',[
         st('Прочитай отметки','Что известно о точке E?','AE = EB',['AE ⟂ EB','E — вершина параллелограмма'],'Одинаковые засечки показывают равные отрезки.'),
@@ -507,7 +513,7 @@ function build(topic,level,skill,seed){
         st('Сделай вывод','Что доказано?',result,['ABCD — трапеция','данных недостаточно'],'Условия признака выполнены полностью.')
       ],result,['ABCD — трапеция','данных недостаточно']);
     }
-    const diagram=parallelogramSvg('<line x1="75" y1="270" x2="455" y2="80" class="geo-guide strong"/><line x1="155" y1="80" x2="375" y2="270" class="geo-guide strong"/><circle cx="265" cy="175" r="5" class="geo-center"/><text x="274" y="170" class="geo-value">O</text><path d="M165 220 l8 15 M357 115 l8 15 M204 118 l12 -13 M316 245 l12 -13" class="geo-tick"/>','Признак параллелограмма по диагоналям');
+    const diagram=diagonalsParallelogramSvg('Признак параллелограмма по диагоналям');
     const result='ABCD — параллелограмм';
     return make('Признак по диагоналям',diagram,'Если диагонали четырёхугольника точкой пересечения делятся пополам, то четырёхугольник является параллелограммом.',[
       st('Прочитай засечки','Какие равенства даны?','AO = OC; BO = OD',['AO = BO; OC = OD','AC = BD'],'Засечки сравнивают две половины каждой диагонали.'),
@@ -528,7 +534,7 @@ function build(topic,level,skill,seed){
     }
     if(skill===1){
       const m=2+seed%3,n=m+1,k=2+Math.floor(seed/2)%3,ab=m*k,ad=(m+n)*k,perimeter=2*(ab+ad);
-      const diagram=parallelogramSvg('<circle cx="335" cy="80" r="5" class="geo-center"/><text x="329" y="61" class="geo-value">E</text><line x1="75" y1="270" x2="335" y2="80" class="geo-guide strong"/><path d="M88 247 A28 28 0 0 1 109 260 M96 232 A44 44 0 0 1 128 251" class="geo-angle"/><text x="226" y="53" class="geo-note">BE : EC = '+m+' : '+n+'</text><text x="183" y="320" class="geo-note">P = '+perimeter+'</text>','Биссектриса угла параллелограмма');
+      const diagram=parallelogramSvg('<circle cx="361" cy="80" r="5" class="geo-center"/><text x="355" y="61" class="geo-value">E</text><line x1="75" y1="270" x2="361" y2="80" class="geo-guide strong"/><g data-equal="BAE-EAD"><path d="M86 244 Q91 251 98 254 M98 254 Q102 262 103 270" class="geo-angle"/></g><text x="226" y="53" class="geo-note">BE : EC = '+m+' : '+n+'</text><text x="183" y="320" class="geo-note">P = '+perimeter+'</text>','Биссектриса угла параллелограмма');
       const result='AB = '+ab+'; AD = '+ad;
       return make('Биссектриса делит сторону',diagram,'Из AE — биссектриса и AD ∥ BC следует ∠BAE=∠AEB, поэтому треугольник ABE равнобедренный и AB=BE.',[
         st('Докажи равенство','Какое равенство следует из биссектрисы и параллельности?','AB = BE',['AB = EC','AE = BC'],'Равные углы при вершинах A и E делают треугольник ABE равнобедренным.'),
@@ -539,7 +545,7 @@ function build(topic,level,skill,seed){
       ],result,['AB = '+ad+'; AD = '+ab,'AB = '+m+'; AD = '+(m+n)]);
     }
     if(skill===2){
-      const diagram=parallelogramSvg('<circle cx="115" cy="175" r="5" class="geo-center"/><circle cx="415" cy="175" r="5" class="geo-center"/><text x="91" y="173" class="geo-value">M</text><text x="427" y="175" class="geo-value">N</text><line x1="115" y1="175" x2="455" y2="80" class="geo-guide strong"/><line x1="415" y1="175" x2="75" y2="270" class="geo-guide strong"/><path d="M101 137 l15 7 M113 207 l15 7 M404 137 l15 7 M416 207 l15 7" class="geo-tick"/>','Середины противоположных сторон');
+      const diagram=parallelogramSvg('<circle cx="115" cy="175" r="5" class="geo-center"/><circle cx="415" cy="175" r="5" class="geo-center"/><text x="91" y="178" class="geo-value">M</text><text x="427" y="178" class="geo-value">N</text><line x1="115" y1="175" x2="455" y2="80" class="geo-guide strong"/><line x1="415" y1="175" x2="75" y2="270" class="geo-guide strong"/><g data-equal="AM-MB"><path d="M87 219 L103 226 M127 124 L143 131" class="geo-tick"/></g><g data-equal="CN-ND"><path d="M427 124 L443 131 M387 219 L403 226" class="geo-tick"/></g>','Середины противоположных сторон');
       const result='AMCN — параллелограмм';
       return make('Соедини середины с вершинами',diagram,'Если M и N — середины противоположных сторон AB и CD параллелограмма ABCD, то AM и CN равны и параллельны.',[
         st('Используй середины','Какие равенства верны?','AM = MB; CN = ND',['AM = CN сразу по условию','MC = AN'],'Середина делит каждый отрезок на две равные части.'),
@@ -549,7 +555,7 @@ function build(topic,level,skill,seed){
       ],result,['AMCN — трапеция','данных недостаточно']);
     }
     if(skill===3){
-      const diagram=parallelogramSvg('<line x1="75" y1="270" x2="183" y2="17" class="geo-guide"/><line x1="455" y1="80" x2="347" y2="323" class="geo-guide"/><line x1="183" y1="17" x2="455" y2="80" class="geo-guide strong"/><line x1="347" y1="323" x2="75" y2="270" class="geo-guide strong"/><circle cx="183" cy="17" r="5" class="geo-center"/><circle cx="347" cy="323" r="5" class="geo-center"/><text x="190" y="24" class="geo-value">E</text><text x="353" y="342" class="geo-value">F</text><path d="M162 52 l15 7 M354 292 l15 7" class="geo-tick"/><text x="206" y="35" class="geo-note">BE = DF</text>','Продолжения противоположных сторон');
+      const diagram=parallelogramSvg('<line x1="75" y1="270" x2="175" y2="32" class="geo-guide"/><line x1="455" y1="80" x2="355" y2="318" class="geo-guide"/><line x1="175" y1="32" x2="455" y2="80" class="geo-guide strong"/><line x1="355" y1="318" x2="75" y2="270" class="geo-guide strong"/><circle cx="175" cy="32" r="5" class="geo-center"/><circle cx="355" cy="318" r="5" class="geo-center"/><text x="181" y="27" class="geo-value">E</text><text x="361" y="340" class="geo-value">F</text><g data-equal="BE-DF"><path d="M158 57 L174 64 M356 286 L372 293" class="geo-tick"/></g><text x="220" y="27" class="geo-note">BE = DF</text>','Продолжения противоположных сторон');
       const result='AECF — параллелограмм';
       return make('Продолжи равные стороны',diagram,'К равным противоположным сторонам исходного параллелограмма прибавлены равные отрезки на тех же прямых.',[
         st('Запиши исходные свойства','Что известно об AB и CD?','AB = CD и AB ∥ CD',['AB = BC и AB ⟂ CD','AC = BD'],'Это противоположные стороны исходного параллелограмма.'),
@@ -558,7 +564,7 @@ function build(topic,level,skill,seed){
         st('Примени признак','Какой вывод следует?',result,['AECF — трапеция','данных недостаточно'],'Одна пара противоположных сторон четырёхугольника AECF равна и параллельна.')
       ],result,['AECF — трапеция','данных недостаточно']);
     }
-    const diagram=parallelogramSvg('<path d="M84 246 A30 30 0 0 1 107 260 M446 104 A30 30 0 0 1 423 90" class="geo-angle angle-a"/><path d="M166 104 A30 30 0 0 1 184 84 M364 246 A30 30 0 0 1 346 266" class="geo-angle angle-b"/><text x="108" y="249" class="geo-value">α</text><text x="418" y="111" class="geo-value">α</text><text x="176" y="111" class="geo-value">β</text><text x="338" y="249" class="geo-value">β</text>','Противоположные углы четырёхугольника');
+    const diagram=parallelogramSvg('<g data-equal="A-C"><path d="M103 270 Q87 266 86 244 M427 80 Q443 84 444 106" class="geo-angle angle-a"/></g><g data-equal="B-D"><path d="M183 80 Q158 84 144 106 M347 270 Q372 266 386 244" class="geo-angle angle-b"/></g><text x="106" y="250" class="geo-value">α</text><text x="416" y="116" class="geo-value">α</text><text x="178" y="116" class="geo-value">β</text><text x="330" y="250" class="geo-value">β</text>','Противоположные углы четырёхугольника');
     const result='ABCD — параллелограмм';
     return make('Признак по противоположным углам',diagram,'Если в четырёхугольнике обе пары противоположных углов равны, то каждая пара соседних углов в сумме даёт 180°, а противоположные стороны параллельны.',[
       st('Запиши данные','Какие углы равны?','∠A = ∠C; ∠B = ∠D',['∠A = ∠B; ∠C = ∠D','только ∠A = ∠C'],'На рисунке одинаковыми цветами и буквами отмечены противоположные углы.'),
