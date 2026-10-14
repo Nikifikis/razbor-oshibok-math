@@ -26,12 +26,19 @@
   $('#copyLink').onclick=()=>copyUrl('work.html',{student:current.student,grade:String(current.grade),topic:current.topic,level:String(current.level),count:String(current.count),seed:String(current.seed),hints:includeHints?'1':'0'},'Ссылка на печатную работу скопирована.');
   const readHistory=()=>{try{return JSON.parse(localStorage.getItem(historyKey)||'[]')}catch{return[]}};
   const saveHistory=items=>localStorage.setItem(historyKey,JSON.stringify(items.slice(0,80)));
+  async function jsonResponse(response,fallback){
+    const text=await response.text();let payload=null;
+    try{payload=text?JSON.parse(text):{}}catch{}
+    if(!response.ok)throw Error(payload?.error||fallback);
+    if(!payload||typeof payload!=='object')throw Error(fallback);
+    return payload;
+  }
   async function createTrackedLink(data,message,showQr=false){
     $('#shareStatus').hidden=false;$('#shareStatus').textContent='Создаю персональную ссылку…';
     try{
       if(data.assignmentUrl){const copied=await copyText(data.assignmentUrl);if(showQr)showShareCard(data.assignmentUrl);$('#shareStatus').textContent=copied?message:'Ссылка готова — скопируйте её из поля выше.';return data.assignmentUrl}
       const response=await fetch('api/shared/assignments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({student:data.student,grade:data.grade,topic:data.topic,level:data.level,count:data.count,seed:data.seed,skill:data.skill})});
-      const payload=await response.json();if(!response.ok)throw Error(payload.error||'Не удалось создать ссылку');
+      const payload=await jsonResponse(response,'Сервер результатов временно недоступен. Попробуйте ещё раз.');
       const records=readHistory();records.unshift({id:payload.assignmentId,teacherKey:payload.teacherKey,createdAt:new Date().toISOString()});saveHistory(records);
       const params={student:data.student,grade:String(data.grade),topic:data.topic,level:String(data.level),count:String(data.count),seed:String(data.seed),assignment:payload.assignmentId,access:payload.studentKey};if(data.skill!==null&&data.skill!==undefined)params.skill=String(data.skill);
       const url=new URL('assigned.html',location.href);url.search=new URLSearchParams(params);
@@ -45,10 +52,10 @@
   $('#toggleQr').onclick=()=>{const section=$('#qrSection');section.hidden=!section.hidden;$('#toggleQr').textContent=section.hidden?'Показать QR-код':'Скрыть QR-код'};
   const statusText={not_started:'Не открывал',started:'Выполняет тест',needs_work:'Есть ошибки',working_on_errors:'Разбирает ошибки',completed:'Всё выполнено верно',remediated:'Работа над ошибками завершена'};
   const dateText=value=>value?new Date(value.replace(' ','T')+'Z').toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'ещё не открывал';
-  async function getRecord(record){const response=await fetch('api/shared/assignments/'+encodeURIComponent(record.id),{headers:{'x-teacher-key':record.teacherKey}});if(!response.ok)throw Error('Результат недоступен');return {...await response.json(),record}}
+  async function getRecord(record){const response=await fetch('api/shared/assignments/'+encodeURIComponent(record.id),{headers:{'x-teacher-key':record.teacherKey}});return {...await jsonResponse(response,'Результат недоступен'),record}}
   function resultCard(data){const {assignment:a,result:r,mistakes}=data,skills=catalog[a.topic]?.skills[a.level]||[],article=document.createElement('article');article.className='result-entry';const wrong=r.wrongSkills||[];article.innerHTML='<div><span class="status-pill '+escape(r.status)+'">'+escape(statusText[r.status]||r.status)+'</span><h3>'+escape(a.student)+'</h3><p>'+escape(a.topicName)+' · '+a.level+'.0'+(a.skill!==null?' · '+escape(skills[a.skill]||'один навык'):'')+'</p><p>Последнее действие: '+escape(dateText(r.updatedAt))+'</p>'+(wrong.length?'<div class="result-skills">'+wrong.map(i=>'<span class="skill-chip">'+escape(skills[i]||('Навык '+(i+1)))+'</span>').join('')+'</div>':'')+'</div><div class="score">'+(r.testTotal?r.testCorrect+'/'+r.testTotal:'—')+'</div>'+(mistakes.length?'<ul class="result-mistakes">'+mistakes.slice(0,5).map(m=>'<li>'+escape(skills[m.skill_index]||'Навык')+': выбран ответ «'+escape(m.answer_text||'—')+'»</li>').join('')+'</ul>':'')+'<div class="result-actions"></div>';
     const actions=article.querySelector('.result-actions');wrong.forEach(index=>{const button=document.createElement('button');button.type='button';button.className='secondary';button.textContent='Дать ещё: '+(skills[index]||('навык '+(index+1)));button.onclick=()=>createTrackedLink({...a,skill:index,count:Math.max(3,Math.min(6,a.count)),seed:(Date.now()%10000000)+index},'Новая ссылка на этот навык скопирована. QR-код обновлён.',true);actions.append(button)});if(!wrong.length)actions.remove();return article;
   }
-  async function loadResults(){const list=$('#resultsList'),records=readHistory();if(!records.length){list.innerHTML='<div class="empty-results">Пока нет отправленных тренировок.</div>';return}list.innerHTML='<div class="empty-results">Загружаю результаты…</div>';const loaded=await Promise.all(records.map(record=>getRecord(record).catch(()=>null)));const cards=loaded.filter(Boolean).map(resultCard);list.replaceChildren(...(cards.length?cards:[Object.assign(document.createElement('div'),{className:'empty-results',textContent:'Результаты пока недоступны. Нажмите «Обновить» чуть позже.'})]))}
+  async function loadResults(){const list=$('#resultsList'),records=readHistory();if(!records.length){list.innerHTML='<div class="empty-results">Пока нет отправленных тренировок.</div>';return}list.innerHTML='<div class="empty-results">Загружаю результаты…</div>';const loaded=await Promise.all(records.map(record=>getRecord(record).catch(()=>null)));const cards=loaded.filter(Boolean).map(resultCard);list.replaceChildren(...(cards.length?cards:[Object.assign(document.createElement('div'),{className:'empty-results',textContent:'Не удалось загрузить журнал. Проверьте интернет и нажмите «Обновить».'})]))}
   $('#refreshResults').onclick=loadResults;loadResults();
 })();
