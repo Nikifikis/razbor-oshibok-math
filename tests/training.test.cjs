@@ -29,6 +29,13 @@ for(const [topic,c] of Object.entries(catalog))for(const level of [2,3])for(let 
       assert.doesNotMatch(p.formula,/из вершины A/);
     }
   }
+  if(topic==='geometry_angles'){
+    assert.doesNotMatch(p.formula,/NaN|undefined/,'angle diagram must contain valid coordinates and labels');
+    assert.doesNotMatch(p.formula,/marker-end|marker-start/,'angle diagrams must not add unexplained arrowheads');
+    if(level===2&&skill===3)assert.match(p.formula,/data-equal-angle="AOB-AOC"/);
+    if(level===3&&skill===1){assert.match(p.formula,/class="geo-mark"/);assert.ok(Number(p.result.match(/(\d+(?:\.\d+)?)°/)[1])>0);}
+    if(level===3&&skill===2){assert.match(p.formula,/class="geo-sector-labels"/);for(let n=1;n<=6;n++)assert.match(p.formula,new RegExp('>'+n+'<'));}
+  }
   const fs=fractions(p.formula);
   for(let i=0;i<10;i++){
     const vars={x:1.73+i,y:3.21+i,a:1.31+i,b:2.83+i,m:2.13+i,n:4.47+i,u:2.16+i};
