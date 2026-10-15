@@ -36,6 +36,15 @@ for(const [topic,c] of Object.entries(catalog))for(const level of [2,3])for(let 
     if(level===3&&skill===1){assert.match(p.formula,/class="geo-mark"/);assert.ok(Number(p.result.match(/(\d+(?:\.\d+)?)°/)[1])>0);}
     if(level===3&&skill===2){assert.match(p.formula,/class="geo-sector-labels"/);for(let n=1;n<=6;n++)assert.match(p.formula,new RegExp('>'+n+'<'));}
   }
+  if(topic==='geometry_triangles'){
+    assert.doesNotMatch(p.formula,/NaN|undefined/,'triangle diagram must contain valid coordinates and labels');
+    assert.doesNotMatch(p.formula,/marker-end|marker-start/,'triangle diagrams must not add decorative arrowheads');
+    if(level===2&&skill===1)assert.match(p.formula,/data-equal="AM-MC"|class="geo-mark"|data-equal-angle="BAT-TAC"/);
+    if(level===2&&skill===3){assert.match(p.formula,/data-common="PO"/);assert.match(p.formula,/data-equal="OQ-OR"/);}
+    if(level===2&&skill===4){assert.match(p.formula,/data-equal="AK-KB"/);assert.match(p.formula,/data-equal="CK-KD"/);}
+    if(level===3&&skill===1){assert.match(p.formula,/data-equal="AB-AC"/);assert.match(p.formula,/data-common="AD"/);}
+    if(level===3&&skill===2){assert.match(p.formula,/data-equal="AO-KO"/);assert.match(p.formula,/data-common="OC"/);}
+  }
   const fs=fractions(p.formula);
   for(let i=0;i<10;i++){
     const vars={x:1.73+i,y:3.21+i,a:1.31+i,b:2.83+i,m:2.13+i,n:4.47+i,u:2.16+i};
