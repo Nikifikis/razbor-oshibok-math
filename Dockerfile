@@ -1,6 +1,6 @@
 FROM node:22-alpine
 WORKDIR /app
-COPY package.json server.js training.js personal-access.js ./
+COPY package.json server.js training.js personal-access.js shared-results.js ./
 COPY public ./public
 COPY tests ./tests
 COPY scripts ./scripts

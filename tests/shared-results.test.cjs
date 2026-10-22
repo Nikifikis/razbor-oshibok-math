@@ -19,6 +19,10 @@ const {server,db}=require('../server');
     journal=(await request('/api/shared/assignments/'+assignmentId,{headers:{'x-teacher-key':teacherKey}})).data;assert.equal(journal.result.status,'remediated');assert.deepEqual(journal.result.completedSkills,[1]);
     assert.equal((await request('/api/shared/assignments',{method:'POST',body:{student:'Иван',grade:7,topic:'numeric',level:2,count:4,seed:2,skill:99}})).status,400);
     const focused=await request('/api/shared/assignments',{method:'POST',body:{student:'Иван',grade:7,topic:'numeric',level:2,count:3,seed:99,skill:2}});assert.equal(focused.status,201);
+    for(const topic of ['geometry_angles','geometry_triangles']){
+      const geometry=await request('/api/shared/assignments',{method:'POST',body:{student:'Проверка',grade:7,topic,level:2,count:3,seed:2026,skill:null}});
+      assert.equal(geometry.status,201,`Отслеживаемая ссылка должна создаваться для ${topic}`);
+    }
     console.log('Shared result tracking tests passed.');
   }finally{await new Promise(resolve=>server.close(resolve));db.close();fs.rmSync(directory,{recursive:true,force:true})}
 })().catch(error=>{console.error(error);process.exitCode=1});
